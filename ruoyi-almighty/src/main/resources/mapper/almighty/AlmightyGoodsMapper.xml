@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.almighty.mapper.AlmightyGoodsMapper">
+    
+    <resultMap type="AlmightyGoods" id="AlmightyGoodsResult">
+        <result property="goodsId"    column="goods_id"    />
+        <result property="gName"    column="g_name"    />
+        <result property="gPublishdate"    column="g_publishdate"    />
+        <result property="gDetail"    column="g_detail"    />
+        <result property="gPrice"    column="g_price"    />
+        <result property="uId"    column="u_id"    />
+    </resultMap>
+
+    <sql id="selectAlmightyGoodsVo">
+        select goods_id, g_name, g_publishdate, g_detail, g_price, u_id from almighty_goods
+    </sql>
+
+    <select id="selectAlmightyGoodsList" parameterType="AlmightyGoods" resultMap="AlmightyGoodsResult">
+        <include refid="selectAlmightyGoodsVo"/>
+        <where>  
+            <if test="gName != null  and gName != ''"> and g_name like concat('%', #{gName}, '%')</if>
+            <if test="gPublishdate != null "> and g_publishdate = #{gPublishdate}</if>
+            <if test="gDetail != null  and gDetail != ''"> and g_detail = #{gDetail}</if>
+            <if test="gPrice != null "> and g_price = #{gPrice}</if>
+            <if test="uId != null "> and u_id = #{uId}</if>
+        </where>
+    </select>
+    
+    <select id="selectAlmightyGoodsByGoodsId" parameterType="Long" resultMap="AlmightyGoodsResult">
+        <include refid="selectAlmightyGoodsVo"/>
+        where goods_id = #{goodsId}
+    </select>
+        
+    <insert id="insertAlmightyGoods" parameterType="AlmightyGoods" useGeneratedKeys="true" keyProperty="goodsId">
+        insert into almighty_goods
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="gName != null">g_name,</if>
+            <if test="gPublishdate != null">g_publishdate,</if>
+            <if test="gDetail != null">g_detail,</if>
+            <if test="gPrice != null">g_price,</if>
+            <if test="uId != null">u_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="gName != null">#{gName},</if>
+            <if test="gPublishdate != null">#{gPublishdate},</if>
+            <if test="gDetail != null">#{gDetail},</if>
+            <if test="gPrice != null">#{gPrice},</if>
+            <if test="uId != null">#{uId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAlmightyGoods" parameterType="AlmightyGoods">
+        update almighty_goods
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="gName != null">g_name = #{gName},</if>
+            <if test="gPublishdate != null">g_publishdate = #{gPublishdate},</if>
+            <if test="gDetail != null">g_detail = #{gDetail},</if>
+            <if test="gPrice != null">g_price = #{gPrice},</if>
+            <if test="uId != null">u_id = #{uId},</if>
+        </trim>
+        where goods_id = #{goodsId}
+    </update>
+
+    <delete id="deleteAlmightyGoodsByGoodsId" parameterType="Long">
+        delete from almighty_goods where goods_id = #{goodsId}
+    </delete>
+
+    <delete id="deleteAlmightyGoodsByGoodsIds" parameterType="String">
+        delete from almighty_goods where goods_id in 
+        <foreach item="goodsId" collection="array" open="(" separator="," close=")">
+            #{goodsId}
+        </foreach>
+    </delete>
+</mapper>
